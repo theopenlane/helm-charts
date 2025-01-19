@@ -1,0 +1,34 @@
+steps:
+  - name: ":helm: Helm Tarball Update"
+    key: "helm-dep-up"
+    plugins:
+      - theopenlane/helm#v1.0.0: 
+          user:
+            name: theopenlane-bender
+            email: bender@theopenlane.io
+        
+  - label: ":helm: docs"
+    depends_on:
+      - helm-dep-up
+    plugins:
+      - docker#v5.12.0:
+          image: "jnorwood/helm-docs:latest"
+          volume: ["`pwd`:/helm-docs"]
+          entrypoint: "/usr/bin/helm-docs"
+          command: ["helm", "docs", "--document-dependency-values"]
+      - theopenlane/git-commit#v1.0.1:
+          message: "Updated helm docs"
+          https: true
+          user:
+            name: theopenlane-bender
+            email: bender@theopenlane.io
+  
+  - label: ":helm: lint"
+    depends_on:
+      - helm-dep-up
+    plugins:
+      - docker#v5.12.0:
+          image: "alpine/helm"
+          command: 
+            - "lint"
+            - "charts/datum"

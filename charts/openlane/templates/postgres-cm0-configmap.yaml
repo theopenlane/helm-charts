@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  init.sql: |-
+    CREATE DATABASE openfga;
+
+    GRANT ALL PRIVILEGES ON DATABASE openfga TO postgres;
+
+    CREATE DATABASE core;
+
+    GRANT ALL PRIVILEGES ON DATABASE core TO postgres;
+
+    CREATE DATABASE jobs;
+
+    GRANT ALL PRIVILEGES ON DATABASE jobs TO postgres;
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: postgres
+  name: postgres-cm0

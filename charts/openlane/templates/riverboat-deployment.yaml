@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: riverboat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.openlane.service: riverboat
+    spec:
+      containers:
+        - args:
+            - serve
+            - --debug
+            - --pretty
+          env:
+            - name: RIVERBOAT_JOBQUEUE_DATABASEHOST
+              value: postgres://postgres:password@host.docker.internal:5432/jobs?sslmode=disable
+            - name: RIVERBOAT_RUNMIGRATIONS
+              value: "true"
+          image: ghcr.io/theopenlane/riverboat:arm64-78-90832455
+          name: riverboat
+      restartPolicy: Always

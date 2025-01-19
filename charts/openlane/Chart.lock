@@ -1,0 +1,12 @@
+dependencies:
+- name: common
+  repository: https://charts.bitnami.com/bitnami
+  version: 2.27.0
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 20.6.3
+- name: openfga
+  repository: https://openfga.github.io/helm-charts
+  version: 0.2.21
+digest: sha256:2a59665df4a9b68c35a0e862bebe81cc1e4020cf1bae185fa1b19c3ee1f77119
+generated: "2025-01-18T11:55:36.358612-07:00"

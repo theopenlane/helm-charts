@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.openlane.service: redis
+  strategy:
+    type: Recreate
+    spec:
+      containers:
+        - args:
+            - redis-server
+            - --save
+            - "20"
+            - "1"
+            - --loglevel
+            - warning
+          image: redis:7.4.1-alpine
+          name: redis
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: redis-data
+      restartPolicy: Always
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-data

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.openlane.service: postgres
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - args:
+            - postgres
+            - -c
+            - max_connections=150
+          env:
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgres:16
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready -U postgres
+            failureThreshold: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+          name: postgres
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-cm0
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: postgres-cm0
+          name: postgres-cm0

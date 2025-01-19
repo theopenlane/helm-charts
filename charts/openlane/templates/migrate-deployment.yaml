@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migrate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.openlane.service: migrate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.openlane.service: migrate
+    spec:
+      containers:
+        - args:
+            - migrate
+          env:
+            - name: OPENFGA_DATASTORE_ENGINE
+              value: postgres
+            - name: OPENFGA_DATASTORE_URI
+              value: postgres://postgres:password@postgres:5432/openfga?sslmode=disable
+          image: openfga/openfga:v1.6.2
+          name: migrate
+      restartPolicy: Always

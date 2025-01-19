@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openfga
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.openlane.service: openfga
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.openlane.service: openfga
+    spec:
+      containers:
+        - args:
+            - run
+            - --check-query-cache-enabled
+            - --metrics-enabled
+            - --datastore-metrics-enabled
+            - --authn-method=preshared
+            - --authn-preshared-keys="QKwHEmWX99RnFh28eSRJ3GWlfb2FQkL7toh1GJpzch1mMkVeMg"
+          env:
+            - name: OPENFGA_DATASTORE_ENGINE
+              value: postgres
+            - name: OPENFGA_DATASTORE_MAX_OPEN_CONNS
+              value: "100"
+            - name: OPENFGA_DATASTORE_URI
+              value: postgres://postgres:password@postgres:5432/openfga?sslmode=disable
+            - name: OPENFGA_LIST_USERS_MAX_RESULTS
+              value: "10000"
+            - name: OPENFGA_LOG_FORMAT
+              value: json
+            - name: OPENFGA_PLAYGROUND_ENABLED
+              value: "true"
+          image: openfga/openfga:v1.6.2
+          livenessProbe:
+            exec:
+              command:
+                - /usr/local/bin/grpc_health_probe
+                - -addr=openfga:8081
+            failureThreshold: 3
+            periodSeconds: 5
+            timeoutSeconds: 30
+          name: openfga
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8081
+              protocol: TCP
+            - containerPort: 3000
+              protocol: TCP
+            - containerPort: 2112
+              protocol: TCP
+      restartPolicy: Always
