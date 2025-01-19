@@ -1,0 +1,25 @@
+apiVersion: v2
+name: openlane
+description: The Openlane Helm Chart
+type: application
+version: 0.1.0
+appVersion: "1.0"
+sources:
+  - https://github.com/theopenlane/core
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 2.x.x
+  - name: redis
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-redis
+    version: 20.6.3
+    condition: redis.enabled
+  - name: openfga
+    repository: https://openfga.github.io/helm-charts
+    tags:
+      - openfga
+    version: 0.2.21
