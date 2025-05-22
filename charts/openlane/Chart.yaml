@@ -16,7 +16,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     tags:
       - bitnami-redis
-    version: 20.7.1
+    version: 21.1.6
     condition: redis.enabled
   - name: openfga
     repository: https://openfga.github.io/helm-charts
